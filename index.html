@@ -47,7 +47,7 @@
         <label for="author">Author</label>
         <input type="text" name="author" id="author" />
       </div>
-
+      
       <div>
         <label for="title">Title: </label>
         <input
@@ -85,6 +85,28 @@
       // the writeup to view the URL pattern for fetch one and fetch all
       function fetchAll() {
         // TODO
+        let url = document.getElementById('endpoint').value;
+        let output = '';
+        fetch(url)
+        .then((res) => res.json())
+        .then((data) => {
+            output = `
+              <div>
+                <p>${JSON.stringify(data)}</p>
+              </div>
+            `;
+            document.getElementById('output').innerHTML = output;
+        })
+        
+        .catch((err) => {
+             output = `
+              <div>
+                <p>Network Error: 404</p>
+              </div>
+            `;
+            document.getElementById('output').innerHTML = output;         
+        })
+       
       }
 
       // This function should fetch one entry from the given endpoint.
@@ -93,22 +115,126 @@
       // the writeup to view the URL pattern for fetch one and fetch all
       function fetchOne() {
         // TODO
+        let recordId = window.prompt('Enter record id',"");
+        console.log(recordId);
+        let url = document.getElementById('endpoint').value + "\\" + recordId;
+        let output = '';
+        fetch(url)
+        .then((res) => res.json())
+        .then((data) => {
+            output = `
+              <div>
+                <p>${JSON.stringify(data)}</p>
+              </div>
+            `;
+            document.getElementById('output').innerHTML = output;
+        })
+        
+        .catch((err) => {
+             output = `
+              <div>
+                <p>Network Error: 404</p>
+              </div>
+            `;
+            document.getElementById('output').innerHTML = output;         
+        })
       }
 
       // This function should use fetch to create one entry in the given endpoint.
       // From the 4 CRUD actions, this is the CREATE action, and uses the POST http method.
       // The main difference from updateRecord() will be the URL you send data to; check
       // the writeup to view the URL pattern for create and update
-      function createRecord() {
+      function createRecord(x) {
         // TODO
+        if(x == 'show') {
+          document.getElementById('recordForm').style.display = 'inline';
+        }
+
+        else {
+          let author_name = document.getElementById('author').value;
+          let title_name = document.getElementById('title').value;
+
+          let url = document.getElementById('endpoint').value;
+          let output = '';
+
+          fetch(url, {
+            method: 'POST',
+            headers: {
+              'Accept':'application/json',
+              'Content-type':'application/json'
+            },
+            body:JSON.stringify({title:title_name, author:author_name})
+          })
+          .then((res) => res.json())
+
+          .then((data) => {
+            output = `
+              <div>
+                <p>${JSON.stringify(data)}</p>
+              </div>
+            `;
+            document.getElementById('output').innerHTML = output;
+         })     
+
+          .catch((err) => {
+              output = `
+                <div>
+                  <p>Network Error: 404</p>
+                </div>
+              `;
+              document.getElementById('output').innerHTML = output;         
+          }) 
+          document.getElementById('recordForm').style.display = 'none';    
+        } 
       }
 
       // This function should use fetch to update one existing entry in the given endpoint.
       // From the 4 CRUD actions, this is the UPDATE action, and uses the PUT http method.
       // The main difference from createRecord() will be the URL you send data to; check
       // the writeup to view the URL pattern for create and update
-      function updateRecord() {
+      function updateRecord(x) {
         // TODO
+        if(x == 'show') {
+          document.getElementById('recordForm').style.display = 'inline';
+          document.getElementById('recordIDcontainer').style.display = 'inline';
+        }
+        else {
+          let author_name = document.getElementById('author').value;
+          let title_name = document.getElementById('title').value;
+          let id = document.getElementById('recordID').value;
+
+
+          let url = document.getElementById('endpoint').value + "\\" + id;
+          let output = '';
+
+          fetch(url, {
+            method: 'PUT',
+            headers: {
+              'Content-type':'application/json'
+            },
+            body:JSON.stringify({title:title_name, author:author_name})
+          })
+          .then((res) => res.json())
+
+          .then((data) => {
+            output = `
+              <div>
+                <p>${JSON.stringify(data)}</p>
+              </div>
+            `;
+            document.getElementById('output').innerHTML = output;
+         })     
+
+          .catch((err) => {
+              output = `
+                <div>
+                  <p>Network Error: 404</p>
+                </div>
+              `;
+              document.getElementById('output').innerHTML = output;         
+          }) 
+          document.getElementById('recordForm').style.display = 'none';    
+        } 
       }
 
       // This function should use fetch to delete one existing entry in the given endpoint.
@@ -118,7 +244,37 @@
       // delete all, only delete one.
       function deleteRecord() {
         // TODO
-      }
+        let recordId = window.prompt('Enter record id',"");
+        
+        let url = document.getElementById('endpoint').value + "\\" + recordId;
+        let output = '';
+
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+              'Content-type':'application/json'
+            }
+        })
+          .then((res) => res.json())
+
+          .then((data) => {
+            output = `
+              <div>
+                <p>${JSON.stringify(data)}</p>
+              </div>
+            `;
+            document.getElementById('output').innerHTML = output;
+         })     
+
+          .catch((err) => {
+              output = `
+                <div>
+                  <p>Network Error: 404</p>
+                </div>
+              `;
+              document.getElementById('output').innerHTML = output;         
+          }) 
+        }
 
       window.addEventListener('DOMContentLoaded', () => {
         // Action Form Event Listener
